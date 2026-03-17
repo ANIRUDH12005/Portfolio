@@ -1,66 +1,60 @@
-import { SplitText } from "gsap-trial/SplitText";
 import gsap from "gsap";
-import { smoother } from "../Navbar";
 
 export function initialFX() {
   document.body.style.overflowY = "auto";
-  smoother.paused(false);
-  document.getElementsByTagName("main")[0].classList.add("main-active");
+
+  document.getElementsByTagName("main")[0]?.classList.add("main-active");
+
+  // Background animation
   gsap.to("body", {
     backgroundColor: "#0a0e17",
     duration: 0.5,
     delay: 1,
   });
 
-  var landingText = new SplitText(
+  // Landing main text animation (simple replacement of SplitText)
+  gsap.fromTo(
     [".landing-info h3", ".landing-intro h2", ".landing-intro h1"],
-    {
-      type: "chars,lines",
-      linesClass: "split-line",
-    }
-  );
-  gsap.fromTo(
-    landingText.chars,
     { opacity: 0, y: 80, filter: "blur(5px)" },
     {
       opacity: 1,
-      duration: 1.2,
-      filter: "blur(0px)",
-      ease: "power3.inOut",
       y: 0,
-      stagger: 0.025,
+      filter: "blur(0px)",
+      duration: 1.2,
+      ease: "power3.inOut",
+      stagger: 0.15,
       delay: 0.3,
     }
   );
 
-  let TextProps = { type: "chars,lines", linesClass: "split-h2" };
-
-  var landingText2 = new SplitText(".landing-h2-info", TextProps);
+  // Secondary text
   gsap.fromTo(
-    landingText2.chars,
+    ".landing-h2-info",
     { opacity: 0, y: 80, filter: "blur(5px)" },
     {
       opacity: 1,
-      duration: 1.2,
-      filter: "blur(0px)",
-      ease: "power3.inOut",
       y: 0,
-      stagger: 0.025,
+      filter: "blur(0px)",
+      duration: 1.2,
+      ease: "power3.inOut",
       delay: 0.3,
     }
   );
 
+  // Small text animation
   gsap.fromTo(
     ".landing-info-h2",
     { opacity: 0, y: 30 },
     {
       opacity: 1,
+      y: 0,
       duration: 1.2,
       ease: "power1.inOut",
-      y: 0,
       delay: 0.8,
     }
   );
+
+  // Navbar + icons fade
   gsap.fromTo(
     [".header", ".icons-section", ".nav-fade"],
     { opacity: 0 },
@@ -72,65 +66,51 @@ export function initialFX() {
     }
   );
 
-  var landingText3 = new SplitText(".landing-h2-info-1", TextProps);
-  var landingText4 = new SplitText(".landing-h2-1", TextProps);
-  var landingText5 = new SplitText(".landing-h2-2", TextProps);
-
-  LoopText(landingText2, landingText3);
-  LoopText(landingText4, landingText5);
+  // Loop text animation (simplified)
+  loopText(".landing-h2-info", ".landing-h2-info-1");
+  loopText(".landing-h2-1", ".landing-h2-2");
 }
 
-function LoopText(Text1: SplitText, Text2: SplitText) {
-  var tl = gsap.timeline({ repeat: -1, repeatDelay: 1 });
-  const delay = 4;
-  const delay2 = delay * 2 + 1;
+function loopText(selector1: string, selector2: string) {
+  const el1 = document.querySelector(selector1);
+  const el2 = document.querySelector(selector2);
 
-  tl.fromTo(
-    Text2.chars,
-    { opacity: 0, y: 80 },
-    {
-      opacity: 1,
-      duration: 1.2,
-      ease: "power3.inOut",
-      y: 0,
-      stagger: 0.1,
-      delay: delay,
-    },
-    0
-  )
+  if (!el1 || !el2) return;
+
+  const tl = gsap.timeline({ repeat: -1, repeatDelay: 1 });
+
+  tl.to(el1, {
+    y: -80,
+    opacity: 0,
+    duration: 1,
+    ease: "power3.inOut",
+    delay: 3,
+  })
     .fromTo(
-      Text1.chars,
-      { y: 80 },
+      el2,
+      { y: 80, opacity: 0 },
       {
-        duration: 1.2,
-        ease: "power3.inOut",
         y: 0,
-        stagger: 0.1,
-        delay: delay2,
-      },
-      1
+        opacity: 1,
+        duration: 1,
+        ease: "power3.inOut",
+      }
     )
+    .to(el2, {
+      y: -80,
+      opacity: 0,
+      duration: 1,
+      ease: "power3.inOut",
+      delay: 3,
+    })
     .fromTo(
-      Text1.chars,
-      { y: 0 },
+      el1,
+      { y: 80, opacity: 0 },
       {
-        y: -80,
-        duration: 1.2,
+        y: 0,
+        opacity: 1,
+        duration: 1,
         ease: "power3.inOut",
-        stagger: 0.1,
-        delay: delay,
-      },
-      0
-    )
-    .to(
-      Text2.chars,
-      {
-        y: -80,
-        duration: 1.2,
-        ease: "power3.inOut",
-        stagger: 0.1,
-        delay: delay2,
-      },
-      1
+      }
     );
 }
